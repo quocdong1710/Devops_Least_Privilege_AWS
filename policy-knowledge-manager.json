@@ -1,0 +1,61 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowAssetManagementScopedToSpace",
+      "Effect": "Allow",
+      "Action": [
+        "aidevops:CreateAsset",
+        "aidevops:GetAsset",
+        "aidevops:UpdateAsset",
+        "aidevops:DeleteAsset",
+        "aidevops:ListAssets",
+        "aidevops:GetAssetContent",
+        "aidevops:ListAssetVersions",
+        "aidevops:CreateAssetFile",
+        "aidevops:GetAssetFile",
+        "aidevops:UpdateAssetFile",
+        "aidevops:DeleteAssetFile",
+        "aidevops:ListAssetFiles"
+      ],
+      "Resource": "arn:aws:aidevops:*:*:agentspace/${aws:PrincipalTag/AgentSpaceId}"
+    },
+    {
+      "Sid": "AllowGlobalAssetTypesListing",
+      "Effect": "Allow",
+      "Action": "aidevops:ListAssetTypes",
+      "Resource": "*"
+    },
+    {
+      "Sid": "AllowKnowledgeSourceS3BucketAccess",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject",
+        "s3:ListBucket"
+      ],
+      "Resource": [
+        "arn:aws:s3:::aidevops-skills-${aws:PrincipalAccount}*",
+        "arn:aws:s3:::aidevops-skills-${aws:PrincipalAccount}*/*"
+      ]
+    },
+    {
+      "Sid": "AllowKmsKeyUsageForKnowledgeAssets",
+      "Effect": "Allow",
+      "Action": [
+        "kms:Decrypt",
+        "kms:GenerateDataKey",
+        "kms:DescribeKey"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "kms:ViaService": [
+            "s3.amazonaws.com",
+            "aidevops.amazonaws.com"
+          ]
+        }
+      }
+    }
+  ]
+}

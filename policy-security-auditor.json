@@ -1,0 +1,44 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AIDevOpsAgentReadOnlyPermissions",
+      "Effect": "Allow",
+      "Action": [
+        "aidevops:DescribePrivateConnection",
+        "aidevops:DescribeServices",
+        "aidevops:Get*",
+        "aidevops:List*",
+        "aidevops:SearchServiceAccessibleResource"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "AuditTrailAndComplianceVerification",
+      "Effect": "Allow",
+      "Action": [
+        "cloudtrail:LookupEvents",
+        "cloudtrail:DescribeTrails",
+        "cloudtrail:GetTrailStatus",
+        "config:DescribeConfigRules",
+        "config:GetComplianceDetailsByConfigRule",
+        "config:GetComplianceDetailsByResource"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "AccessAnalyzerAndPolicyOptimizationAudit",
+      "Effect": "Allow",
+      "Action": [
+        "access-analyzer:ListFindings",
+        "access-analyzer:GetFinding",
+        "access-analyzer:ListAnalyzers",
+        "iam:GenerateServiceLastAccessedDetails",
+        "iam:GetServiceLastAccessedDetails",
+        "iam:ListPolicies",
+        "iam:GetPolicyVersion"
+      ],
+      "Resource": "*"
+    }
+  ]
+}

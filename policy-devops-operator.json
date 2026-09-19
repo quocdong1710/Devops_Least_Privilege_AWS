@@ -1,0 +1,72 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowOperatorScopedToAgentSpace",
+      "Effect": "Allow",
+      "Action": [
+        "aidevops:CreateChat",
+        "aidevops:SendMessage",
+        "aidevops:ListChats",
+        "aidevops:ListExecutions",
+        "aidevops:ListJournalRecords",
+        "aidevops:DiscoverTopology",
+        "aidevops:ListRecommendations",
+        "aidevops:GetRecommendation",
+        "aidevops:CreateBacklogTask",
+        "aidevops:UpdateBacklogTask",
+        "aidevops:GetAgentSpace"
+      ],
+      "Resource": "arn:aws:aidevops:*:*:agentspace/${aws:PrincipalTag/AgentSpaceId}",
+      "Condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      }
+    },
+    {
+      "Sid": "AllowAccountUsageAccess",
+      "Effect": "Allow",
+      "Action": [
+        "aidevops:GetAccountUsage"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      }
+    },
+    {
+      "Sid": "ObservabilityVerificationReadOnly",
+      "Effect": "Allow",
+      "Action": [
+        "cloudwatch:DescribeAlarms",
+        "cloudwatch:GetMetricData",
+        "cloudwatch:ListMetrics",
+        "logs:FilterLogEvents",
+        "logs:GetLogEvents",
+        "xray:GetTraceSummaries",
+        "xray:BatchGetTraces",
+        "health:DescribeEvents",
+        "health:DescribeEventDetails"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "ControlledRemediationViaApprovedSSMRunbooks",
+      "Effect": "Allow",
+      "Action": [
+        "ssm:StartAutomationExecution",
+        "ssm:GetAutomationExecution",
+        "ssm:DescribeAutomationExecutions",
+        "ssm:StopAutomationExecution"
+      ],
+      "Resource": [
+        "arn:aws:ssm:*:*:automation-definition/Approved-Remediation-*:*",
+        "arn:aws:ssm:*:*:automation-definition/AWS-Restart*:*",
+        "arn:aws:ssm:*:*:automation-execution/*"
+      ]
+    }
+  ]
+}

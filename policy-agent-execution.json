@@ -1,0 +1,68 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AIOPSServiceWriteAccess",
+      "Effect": "Allow",
+      "Action": [
+        "cloudtrail:StartQuery",
+        "support:CreateCase"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "AIDevOpsAgentCoreInvestigationAccess",
+      "Effect": "Allow",
+      "Action": [
+        "access-analyzer:GetAnalyzer",
+        "access-analyzer:List*",
+        "aidevops:GetAsset",
+        "aidevops:ListAssets",
+        "autoscaling:Describe*",
+        "cloudformation:Describe*",
+        "cloudformation:List*",
+        "cloudfront:Get*",
+        "cloudfront:List*",
+        "cloudtrail:DescribeTrails",
+        "cloudtrail:GetQueryResults",
+        "cloudtrail:LookupEvents",
+        "cloudwatch:Describe*",
+        "cloudwatch:Get*",
+        "cloudwatch:List*",
+        "dynamodb:Describe*",
+        "dynamodb:List*",
+        "ec2:Describe*",
+        "ec2:Get*",
+        "ecs:Describe*",
+        "ecs:List*",
+        "eks:Describe*",
+        "eks:List*",
+        "elasticache:Describe*",
+        "elasticloadbalancing:Describe*",
+        "kinesis:Describe*",
+        "kinesis:List*",
+        "kms:DescribeKey",
+        "kms:List*",
+        "lambda:Get*",
+        "lambda:List*",
+        "logs:Describe*",
+        "logs:FilterLogEvents",
+        "logs:Get*",
+        "rds:Describe*",
+        "rds:List*",
+        "route53:Get*",
+        "route53:List*",
+        "s3:GetBucketLocation",
+        "s3:GetBucketPolicy",
+        "s3:ListBucket",
+        "sns:Get*",
+        "sns:List*",
+        "sqs:Get*",
+        "sqs:List*",
+        "xray:BatchGetTraces",
+        "xray:GetTraceSummaries"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
