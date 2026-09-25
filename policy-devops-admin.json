@@ -2,7 +2,7 @@
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "DevOpsAgentAdminCore",
+      "Sid": "DevOpsAgentAdminScoped",
       "Effect": "Allow",
       "Action": [
         "aidevops:CreateAgentSpace",
@@ -17,15 +17,18 @@
         "aidevops:CreatePrivateConnection",
         "aidevops:DeletePrivateConnection"
       ],
-      "Resource": "*"
+      "Resource": [
+        "arn:aws:aidevops:*:${aws:PrincipalAccount}:agentspace/*",
+        "arn:aws:aidevops:*:${aws:PrincipalAccount}:privateconnection/*"
+      ]
     },
     {
       "Sid": "AllowServiceLinkedRolesForDevOpsAndResourceExplorer",
       "Effect": "Allow",
       "Action": "iam:CreateServiceLinkedRole",
       "Resource": [
-        "arn:aws:iam::*:role/aws-service-role/aidevops.amazonaws.com/*",
-        "arn:aws:iam::*:role/aws-service-role/resource-explorer-2.amazonaws.com/*"
+        "arn:aws:iam::${aws:PrincipalAccount}:role/aws-service-role/aidevops.amazonaws.com/*",
+        "arn:aws:iam::${aws:PrincipalAccount}:role/aws-service-role/resource-explorer-2.amazonaws.com/*"
       ],
       "Condition": {
         "StringEquals": {
@@ -43,16 +46,15 @@
         "sso:CreateApplicationAssignment",
         "sso:DeleteApplicationAssignment"
       ],
-      "Resource": "*"
+      "Resource": [
+        "arn:aws:sso:::instance/*",
+        "arn:aws:sso:::application/*"
+      ]
     },
     {
-      "Sid": "AllowPrivateLinkAndVpcEndpointSetup",
+      "Sid": "AllowPrivateLinkNetworkModificationScoped",
       "Effect": "Allow",
       "Action": [
-        "ec2:DescribeVpcs",
-        "ec2:DescribeSubnets",
-        "ec2:DescribeSecurityGroups",
-        "ec2:DescribeVpcEndpoints",
         "ec2:CreateSecurityGroup",
         "ec2:AuthorizeSecurityGroupIngress",
         "ec2:AuthorizeSecurityGroupEgress",
@@ -60,15 +62,45 @@
         "ec2:DeleteVpcEndpoints",
         "ec2:DeleteSecurityGroup"
       ],
-      "Resource": "*"
+      "Resource": [
+        "arn:aws:ec2:*:${aws:PrincipalAccount}:vpc/*",
+        "arn:aws:ec2:*:${aws:PrincipalAccount}:subnet/*",
+        "arn:aws:ec2:*:${aws:PrincipalAccount}:security-group/*",
+        "arn:aws:ec2:*:${aws:PrincipalAccount}:vpc-endpoint/*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:ResourceTag/ManagedBy": "AIDevOps"
+        }
+      }
     },
     {
-      "Sid": "AllowKmsKeyGrantsForAgentSpaceEncryption",
+      "Sid": "AllowKmsKeyGrantsScopedToAccountKey",
       "Effect": "Allow",
       "Action": [
         "kms:DescribeKey",
-        "kms:CreateGrant",
-        "kms:ListAliases"
+        "kms:CreateGrant"
+      ],
+      "Resource": "arn:aws:kms:*:${aws:PrincipalAccount}:key/*",
+      "Condition": {
+        "StringEquals": {
+          "aws:ResourceTag/Purpose": "AIDevOpsEncryption"
+        }
+      }
+    },
+    {
+      "Sid": "ExplicitDenyComputeAndPrivilegeEscalation",
+      "Effect": "Deny",
+      "Action": [
+        "ec2:RunInstances",
+        "ec2:TerminateInstances",
+        "ec2:StopInstances",
+        "kms:ScheduleKeyDeletion",
+        "kms:DisableKey",
+        "iam:CreateUser",
+        "iam:CreateRole",
+        "iam:AttachUserPolicy",
+        "iam:AttachRolePolicy"
       ],
       "Resource": "*"
     }

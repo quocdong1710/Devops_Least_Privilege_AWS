@@ -16,15 +16,10 @@
         "aidevops:GetAssetFile",
         "aidevops:UpdateAssetFile",
         "aidevops:DeleteAssetFile",
-        "aidevops:ListAssetFiles"
+        "aidevops:ListAssetFiles",
+        "aidevops:ListAssetTypes"
       ],
-      "Resource": "arn:aws:aidevops:*:*:agentspace/${aws:PrincipalTag/AgentSpaceId}"
-    },
-    {
-      "Sid": "AllowGlobalAssetTypesListing",
-      "Effect": "Allow",
-      "Action": "aidevops:ListAssetTypes",
-      "Resource": "*"
+      "Resource": "arn:aws:aidevops:*:${aws:PrincipalAccount}:agentspace/${aws:PrincipalTag/AgentSpaceId}"
     },
     {
       "Sid": "AllowKnowledgeSourceS3BucketAccess",
@@ -47,15 +42,29 @@
         "kms:GenerateDataKey",
         "kms:DescribeKey"
       ],
-      "Resource": "*",
+      "Resource": "arn:aws:kms:*:${aws:PrincipalAccount}:key/*",
       "Condition": {
         "StringEquals": {
           "kms:ViaService": [
             "s3.amazonaws.com",
             "aidevops.amazonaws.com"
-          ]
+          ],
+          "aws:ResourceTag/Purpose": "AIDevOpsEncryption"
         }
       }
+    },
+    {
+      "Sid": "ExplicitDenyDestructiveAndChatActions",
+      "Effect": "Deny",
+      "Action": [
+        "aidevops:CreateChat",
+        "aidevops:SendMessage",
+        "s3:DeleteBucket",
+        "s3:PutBucketPolicy",
+        "s3:DeleteObject",
+        "kms:ScheduleKeyDeletion"
+      ],
+      "Resource": "*"
     }
   ]
 }

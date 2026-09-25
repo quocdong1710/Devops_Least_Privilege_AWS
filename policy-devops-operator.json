@@ -15,22 +15,10 @@
         "aidevops:GetRecommendation",
         "aidevops:CreateBacklogTask",
         "aidevops:UpdateBacklogTask",
-        "aidevops:GetAgentSpace"
-      ],
-      "Resource": "arn:aws:aidevops:*:*:agentspace/${aws:PrincipalTag/AgentSpaceId}",
-      "Condition": {
-        "StringEquals": {
-          "aws:ResourceAccount": "${aws:PrincipalAccount}"
-        }
-      }
-    },
-    {
-      "Sid": "AllowAccountUsageAccess",
-      "Effect": "Allow",
-      "Action": [
+        "aidevops:GetAgentSpace",
         "aidevops:GetAccountUsage"
       ],
-      "Resource": "*",
+      "Resource": "arn:aws:aidevops:*:${aws:PrincipalAccount}:agentspace/${aws:PrincipalTag/AgentSpaceId}",
       "Condition": {
         "StringEquals": {
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
@@ -38,12 +26,11 @@
       }
     },
     {
-      "Sid": "ObservabilityVerificationReadOnly",
+      "Sid": "ObservabilityVerificationScoped",
       "Effect": "Allow",
       "Action": [
         "cloudwatch:DescribeAlarms",
         "cloudwatch:GetMetricData",
-        "cloudwatch:ListMetrics",
         "logs:FilterLogEvents",
         "logs:GetLogEvents",
         "xray:GetTraceSummaries",
@@ -51,7 +38,12 @@
         "health:DescribeEvents",
         "health:DescribeEventDetails"
       ],
-      "Resource": "*"
+      "Resource": [
+        "arn:aws:cloudwatch:*:${aws:PrincipalAccount}:alarm:*",
+        "arn:aws:logs:*:${aws:PrincipalAccount}:log-group:*",
+        "arn:aws:xray:*:${aws:PrincipalAccount}:trace/*",
+        "arn:aws:health:*::event/*/*/*"
+      ]
     },
     {
       "Sid": "ControlledRemediationViaApprovedSSMRunbooks",
@@ -63,10 +55,25 @@
         "ssm:StopAutomationExecution"
       ],
       "Resource": [
-        "arn:aws:ssm:*:*:automation-definition/Approved-Remediation-*:*",
-        "arn:aws:ssm:*:*:automation-definition/AWS-Restart*:*",
-        "arn:aws:ssm:*:*:automation-execution/*"
+        "arn:aws:ssm:*:${aws:PrincipalAccount}:automation-definition/Approved-Remediation-*:*",
+        "arn:aws:ssm:*:${aws:PrincipalAccount}:automation-definition/AWS-Restart*:*",
+        "arn:aws:ssm:*:${aws:PrincipalAccount}:automation-execution/*"
       ]
+    },
+    {
+      "Sid": "ExplicitDenyDestructiveOperations",
+      "Effect": "Deny",
+      "Action": [
+        "aidevops:DeleteAgentSpace",
+        "aidevops:UpdateOperatorAppIdpConfig",
+        "logs:DeleteLogGroup",
+        "cloudwatch:PutMetricData",
+        "ssm:SendCommand",
+        "ec2:TerminateInstances",
+        "s3:DeleteObject",
+        "rds:DeleteDBInstance"
+      ],
+      "Resource": "*"
     }
   ]
 }

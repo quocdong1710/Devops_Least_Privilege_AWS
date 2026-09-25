@@ -2,7 +2,7 @@
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "AIDevOpsAgentReadOnlyPermissions",
+      "Sid": "AIDevOpsAgentReadOnlyScoped",
       "Effect": "Allow",
       "Action": [
         "aidevops:DescribePrivateConnection",
@@ -11,10 +11,13 @@
         "aidevops:List*",
         "aidevops:SearchServiceAccessibleResource"
       ],
-      "Resource": "*"
+      "Resource": [
+        "arn:aws:aidevops:*:${aws:PrincipalAccount}:agentspace/*",
+        "arn:aws:aidevops:*:${aws:PrincipalAccount}:privateconnection/*"
+      ]
     },
     {
-      "Sid": "AuditTrailAndComplianceVerification",
+      "Sid": "AuditTrailAndComplianceVerificationScoped",
       "Effect": "Allow",
       "Action": [
         "cloudtrail:LookupEvents",
@@ -24,10 +27,13 @@
         "config:GetComplianceDetailsByConfigRule",
         "config:GetComplianceDetailsByResource"
       ],
-      "Resource": "*"
+      "Resource": [
+        "arn:aws:cloudtrail:*:${aws:PrincipalAccount}:trail/*",
+        "arn:aws:config:*:${aws:PrincipalAccount}:config-rule/*"
+      ]
     },
     {
-      "Sid": "AccessAnalyzerAndPolicyOptimizationAudit",
+      "Sid": "AccessAnalyzerAndPolicyOptimizationAuditScoped",
       "Effect": "Allow",
       "Action": [
         "access-analyzer:ListFindings",
@@ -37,6 +43,27 @@
         "iam:GetServiceLastAccessedDetails",
         "iam:ListPolicies",
         "iam:GetPolicyVersion"
+      ],
+      "Resource": [
+        "arn:aws:access-analyzer:*:${aws:PrincipalAccount}:analyzer/*",
+        "arn:aws:iam::${aws:PrincipalAccount}:policy/*",
+        "arn:aws:iam::${aws:PrincipalAccount}:role/*"
+      ]
+    },
+    {
+      "Sid": "ExplicitDenyChatAndMutationActions",
+      "Effect": "Deny",
+      "Action": [
+        "aidevops:CreateChat",
+        "aidevops:SendMessage",
+        "aidevops:Create*",
+        "aidevops:Update*",
+        "aidevops:Delete*",
+        "cloudtrail:StopLogging",
+        "cloudtrail:DeleteTrail",
+        "iam:CreatePolicy",
+        "iam:AttachRolePolicy",
+        "iam:AttachUserPolicy"
       ],
       "Resource": "*"
     }
